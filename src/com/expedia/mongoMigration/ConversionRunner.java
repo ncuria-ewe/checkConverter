@@ -3,7 +3,7 @@ package com.expedia.mongoMigration;
 import com.mongodb.DBObject;
 
 public class ConversionRunner {
-
+	
 	public static void main(String[] args) {
 		MongoConnection source = null;
 		MongoConnection destination = null;
@@ -25,20 +25,24 @@ public class ConversionRunner {
 		String destinationHostname = args[2];
 
 		source = new MongoConnection(sourceHostname, "seyren", null, null);
-		destination = new MongoConnection(destinationHostname, "seyren", null, null);
+		destination = new MongoConnection(destinationHostname, "seyren2", null, null);
 
-		if (migrationType == "migrateAndDisable" || migrationType == "migrate") {
+		if (migrationType.equals("migrateAndDisable") | migrationType.equals("migrate")) {
 			boolean disable = true;
 			if (migrationType == "migrate") {
 				disable = false;
 			}
+			@SuppressWarnings("unused")
 			boolean dropCurrentChecksSuccess = destination.dropCurrentChecks();
 			DBObject[] sourceChecks = source.getChecks();
 			for (DBObject check : sourceChecks){
 				if (disable) {
+					@SuppressWarnings("unused")
 					boolean disableSuccess = destination.disableCheck(check);
 				}
+				@SuppressWarnings("unused")
 				boolean convertSuccess = destination.convertCheckSubscriptions(check, disable);
+				@SuppressWarnings("unused")
 				boolean saveSuccess = destination.saveCheck(check);
 			}
 		}

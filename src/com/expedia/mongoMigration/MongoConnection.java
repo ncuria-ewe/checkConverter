@@ -18,11 +18,11 @@ import java.util.Iterator;
 
 public class MongoConnection {
 	
-	private static MongoClient mongoClient;
+	private MongoClient mongoClient;
 	
 	private static final String CHECKS_COLL_NAME = "checks";
 	
-	private static DB db;
+	private DB db;
 	
 	public MongoConnection(String dbURL, String databaseName, String userName, String password){
 		try {
@@ -33,7 +33,7 @@ public class MongoConnection {
 				MongoCredential credential = MongoCredential.createCredential(userName, databaseName, password.toCharArray());
 				mongoClient = new MongoClient(new ServerAddress(), Arrays.asList(credential));
 			}
-			db = mongoClient.getDB( "mydb" );
+			db = mongoClient.getDB( databaseName );
 			mongoClient.setWriteConcern(WriteConcern.ACKNOWLEDGED);
 		}
 		catch (Exception e){
@@ -146,7 +146,7 @@ public class MongoConnection {
 	public boolean saveCheck(DBObject check){
 		try {
 			DBCollection checks = this.getCollection(CHECKS_COLL_NAME);
-			checks.save(check);
+			WriteResult result = checks.save(check);
 			return true;
 		}
 		catch (Exception e){
