@@ -25,11 +25,11 @@ public class ConversionRunner {
 		String destinationHostname = args[2];
 
 		source = new MongoConnection(sourceHostname, "seyren", null, null);
-		destination = new MongoConnection(destinationHostname, "seyren2", null, null);
+		destination = new MongoConnection(destinationHostname, "seyren", null, null);
 
 		if (migrationType.equals("migrateAndDisable") | migrationType.equals("migrate")) {
 			boolean disable = true;
-			if (migrationType == "migrate") {
+			if (migrationType.equals("migrate")) {
 				disable = false;
 			}
 			@SuppressWarnings("unused")
