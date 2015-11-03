@@ -5,7 +5,9 @@ import com.mongodb.DBObject;
 public class ConversionRunner {
 
 	public static void main(String[] args) {
-		MongoConnection worker = null;
+		MongoConnection source = null;
+		MongoConnection destination = null;
+		/*
 		String databaseHost = args[0];
 		String databaseName = args[1];
 		if (args.length > 2){
@@ -16,14 +18,29 @@ public class ConversionRunner {
 		else {
 			worker = new MongoConnection(databaseHost, databaseName, null, null);
 		}
-		boolean dropCurrentChecksSuccess = worker.dropCurrentChecks();
-		DBObject[] oldChecks = worker.getOldChecks();
-		for (DBObject check : oldChecks){
-			//boolean deleteSuccess = worker.deleteOldCheck(check);
-			//boolean updateIDSuccess = worker.updateCheckID(check);
-			boolean disableSuccess = worker.disableCheck(check);
-			boolean convertSuccess = worker.convertCheckSubscriptions(check);
-			boolean saveSuccess = worker.saveCheck(check);
+		*/
+
+		String migrationType = args[0];
+		String sourceHostname = args[1];
+		String destinationHostname = args[2];
+
+		source = new MongoConnection(sourceHostname, "seyren", null, null);
+		destination = new MongoConnection(destinationHostname, "seyren", null, null);
+
+		if (migrationType == "migrateAndDisable" || migrationType == "migrate") {
+			boolean disable = true;
+			if (migrationType == "migrate") {
+				disable = false;
+			}
+			boolean dropCurrentChecksSuccess = destination.dropCurrentChecks();
+			DBObject[] sourceChecks = source.getChecks();
+			for (DBObject check : sourceChecks){
+				if (disable) {
+					boolean disableSuccess = destination.disableCheck(check);
+				}
+				boolean convertSuccess = destination.convertCheckSubscriptions(check, disable);
+				boolean saveSuccess = destination.saveCheck(check);
+			}
 		}
 	}
 
